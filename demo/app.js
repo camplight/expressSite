@@ -29,7 +29,7 @@ var aboutPageClone = new AboutPage({
 // register stylesheets and javascript assets handlers
 aboutPageClone.registerStylesheetHandler(app);
 aboutPageClone.registerJavascriptHandler(app);
- console.log(aboutPageClone.attributes);
+
 // render the page on url different from the page's attributes
 app.get("/other", aboutPageClone.render());
 
