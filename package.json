@@ -1,0 +1,23 @@
+{
+  "author": "Boris Filipov",
+  "name": "expressSite",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/camplight/expressSite.git"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "backbone": "latest",
+    "express": "2.5.8",
+    "jade": ">= 0.0.1",
+    "packageme": "latest",
+    "mu2": "latest",
+    "underscore" : "latest"
+  },
+  "devDependencies": {},
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}
