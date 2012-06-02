@@ -25,12 +25,13 @@ var Page = function(attributes, options) {
   if(this.attributes.body.indexOf(".") == 0)
     body = this.attributes.body = path.normalize(root+"/"+this.attributes.body);
   
-  if(this.attributes.layout && 
+  if(typeof this.attributes.layout == "string" && 
       this.attributes.layout.indexOf(".") == 0 && 
       this.attributes.layout.indexOf("/") != 0)
     this.attributes.layout = path.normalize(root+"/"+this.attributes.layout);
   else
-    this.attributes.layout = __dirname+"/layout.html";
+    if(this.attributes.layout !== false)
+      this.attributes.layout = __dirname+"/layout.html";
 
   var prependRoot = function(v){ 
     if(v.indexOf(".") == 0 || v.indexOf("/") != 0)
@@ -106,11 +107,15 @@ _.extend(Page.prototype, Backbone.Events, {
       // compile the page and render the output
       page.compileViews(function(viewsData) {
         renderData.views = viewsData;
-        renderData.layout = page.attributes.layout;
+        
         res.render(page.attributes.body, renderData, function(err, bodyData){
-
-          renderData.body = bodyData;
-          res.render(page.attributes.layout, renderData);
+          
+          if(page.attributes.layout) {
+            renderData.body = bodyData;
+            res.render(page.attributes.layout, renderData);
+          }
+          else
+            res.send(bodyData);
         });
       });
 
