@@ -13,13 +13,10 @@ var Page = function(attributes, options) {
   this.initialize.apply(this, arguments);
 
   this.packageme = require("packageme");
-  this.mu = require('mu2');
 
   var root = this.attributes.root;
   if(!root)
     root = this.attributes.root = path.dirname(body);
-
-  this.mu.root = this.attributes.root;
 
   var body = this.attributes.body;
   if(!body)
@@ -77,16 +74,6 @@ _.extend(Page.prototype, Backbone.Events, {
     return this;
   },
 
-  compileAndRender : function(template, data, callback) {
-    var buffer = '';
-    this.mu.compileAndRender(template, data)
-      .on("error", function(e){ console.log(e, template); })
-      .on('data', function (c) { buffer += c.toString(); })
-      .on('end', function () { callback(buffer); });
-
-    return this;
-  },
-
   compileViews : function(callback) {
     if(this.attributes.views)
       this.packageme({ sourceFolder: this.attributes.views, format: "html" }).toString(callback);
@@ -119,19 +106,12 @@ _.extend(Page.prototype, Backbone.Events, {
       // compile the page and render the output
       page.compileViews(function(viewsData) {
         renderData.views = viewsData;
+        renderData.layout = page.attributes.layout;
+        res.render(page.attributes.body, renderData, function(err, bodyData){
 
-        // compiling the final html, which is send to the browser
-        page.compileAndRender(page.attributes.body, renderData, function(pageBodyData){
-          if(page.attributes.layout) {
-            renderData.body = pageBodyData;
-            page.compileAndRender(page.attributes.layout, renderData, function(pageHtmlData) {
-              res.send(pageHtmlData);
-            });  
-          } else {
-            res.send(pageBodyData);
-          }
+          renderData.body = bodyData;
+          res.render(page.attributes.layout, renderData);
         });
-
       });
 
       return this;

@@ -9,10 +9,11 @@
   "main": "index.js",
   "dependencies": {
     "backbone": "latest",
-    "express": "2.5.8",
+    "express": "3.x",
     "jade": ">= 0.0.1",
+    "hogan.js": "latest",
     "packageme": "latest",
-    "mu2": "latest",
+    "consolidate": "latest",
     "underscore" : "latest"
   },
   "devDependencies": {},

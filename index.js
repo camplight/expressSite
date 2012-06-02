@@ -1,5 +1,6 @@
 var express = require('express');
-var app = exports.app = express.createServer();
+var app = express();
+
 var _ = require("underscore");
 var Page = require("./Page");
 

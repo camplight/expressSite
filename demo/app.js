@@ -1,5 +1,10 @@
 // get express app instance with pages support
 var app = require("expressSite");
+var cons = require("consolidate");
+app.engine('html', cons.hogan);
+
+app.set('view engine', 'html');
+app.set('views', __dirname + '/client/pages');
 
 // set default Page attributes to be passed on every page created by the app
 app.defaultPageAttributes({
