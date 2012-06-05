@@ -5,7 +5,7 @@ var path = require("path");
 var Page = function(attributes, options) {
   attributes = attributes || {};
   if(this.defaults)
-    attributes = _.extend({}, this.defaults, attributes);
+    attributes = _.extend({}, attributes, this.defaults);
 
   this.attributes = attributes;
 
