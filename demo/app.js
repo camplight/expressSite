@@ -6,6 +6,10 @@ app.engine('html', cons.hogan);
 app.set('view engine', 'html');
 app.set('views', __dirname + '/client/pages');
 
+app.configure(function(){
+  app.useExpressSiteMiddleware();
+});
+
 // set default Page attributes to be passed on every page created by the app
 app.defaultPageAttributes({
   root: __dirname+"/client",

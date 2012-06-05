@@ -16,7 +16,9 @@
     "consolidate": "latest",
     "underscore" : "latest"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "jasmine-node": "latest",
+  },
   "optionalDependencies": {},
   "engines": {
     "node": "*"

@@ -4,16 +4,12 @@ var app = express();
 var _ = require("underscore");
 var Page = require("./Page");
 
-// Configuration
-app.configure(function(){
+// provide reasonable defaults for setup of express app
+app.useExpressSiteMiddleware = function(options){
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(app.router);
-});
-
-app.configure('development', function(){
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-});
+};
 
 var defaultPageAttributes = {};
 
