@@ -11,13 +11,14 @@
     "backbone": "latest",
     "express": "3.x",
     "jade": ">= 0.0.1",
-    "hogan.js": "latest",
+    "dustjs-linkedin": "latest",
     "packageme": "latest",
     "consolidate": "latest",
     "underscore" : "latest"
   },
   "devDependencies": {
     "jasmine-node": "latest",
+    "node-mocks-http": "latest",
     "shelljs": "latest"
   },
   "optionalDependencies": {},

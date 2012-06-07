@@ -30,8 +30,8 @@ var Page = function(attributes, options) {
       this.attributes.layout.indexOf("/") != 0)
     this.attributes.layout = path.normalize(root+"/"+this.attributes.layout);
   else
-    if(this.attributes.layout !== false)
-      this.attributes.layout = __dirname+"/layout.html";
+    if(this.attributes.layout !== false && path.existsSync(root+"/layout.html"))
+      this.attributes.layout = root+"/layout.html";
 
   var prependRoot = function(v){ 
     if(v.indexOf(".") == 0 || v.indexOf("/") != 0)
