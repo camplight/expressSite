@@ -23,7 +23,7 @@ describe('App and Page Module critical', function(){
   });
 
   it("should be able to retrieve express route handler", function(){
-    var handler = page.render();
+    var handler = page.render;
     expect(handler).toBeDefined();
   });
 
@@ -38,7 +38,7 @@ describe('App and Page Module critical', function(){
         expect(response._getData(), html.toString());
         done();
       });
-      page.render()(request,response);
+      page.render(request,response);
     });
   });
 

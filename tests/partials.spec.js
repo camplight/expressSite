@@ -30,7 +30,7 @@ describe('Page with Partials', function(){
         expect(response._getData(), html);
         done();
       });
-      page.render()(request,response);
+      page.render(request,response);
     });
   });
 

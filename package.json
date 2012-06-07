@@ -11,7 +11,7 @@
     "backbone": "latest",
     "express": "3.x",
     "jade": ">= 0.0.1",
-    "dustjs-linkedin": "latest",
+    "hogan": "latest",
     "packageme": "latest",
     "consolidate": "latest",
     "underscore" : "latest"
