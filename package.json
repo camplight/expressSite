@@ -1,7 +1,7 @@
 {
   "author": "Boris Filipov",
   "name": "expressSite",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "repository": {
     "type": "git",
     "url": "git://github.com/camplight/expressSite.git"
@@ -11,13 +11,14 @@
     "backbone": "latest",
     "express": "3.x",
     "jade": ">= 0.0.1",
-    "hogan.js": "latest",
+    "hogan": "latest",
     "packageme": "latest",
     "consolidate": "latest",
     "underscore" : "latest"
   },
   "devDependencies": {
     "jasmine-node": "latest",
+    "node-mocks-http": "latest",
     "shelljs": "latest"
   },
   "optionalDependencies": {},

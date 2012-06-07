@@ -1,0 +1,7 @@
+div #{title}
+div Express Site Module
+script
+  document.addEventListener("DOMContentLoaded", function domready() {
+  document.removeEventListener("DOMContentLoaded", domready);
+    packageme.require("index");
+  });

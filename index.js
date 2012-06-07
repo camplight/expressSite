@@ -17,20 +17,32 @@ app.defaultPageAttributes = function(defaults){
   defaultPageAttributes = _.extend(defaults, defaultPageAttributes);
 }
 
-app.addPage = function(input, options) {
+app.addPage = function(input) {
   var page;
   if(typeof input == "function") {
-    page = new input(defaultPageAttributes, options);
+    // in case input is object, create instance of it
+    page = new input(defaultPageAttributes);
   } else {
-    input = _.extend(input, defaultPageAttributes);
-    page = new Page(input, options);
+    // mix input with defaultPageAttributes
+    for(var key in defaultPageAttributes)
+      if(typeof input[key] == "undefined")
+        input[key] = defaultPageAttributes[key];
+      else
+      if(Array.isArray(input[key]))
+        for(var i = 0; i<defaultPageAttributes[key].length; i++)
+          input.push(defaultPageAttributes[key][i]);
+      else
+      if(typeof input[key] == "object")
+        input[key]  = _.extend(defaultPageAttributes[key], input[key]);
+    // pass resulting input as Page attributes
+    page = new Page(input);
   }
 
   page.registerStylesheetHandler(app);
   page.registerJavascriptHandler(app);
 
   if(page.attributes.url)
-    app.get(page.attributes.url, page.render());
+    app.get(page.attributes.url, function(req, res, next){ page.render(req, res, next); });
   
   return page;
 }

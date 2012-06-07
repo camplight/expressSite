@@ -14,24 +14,27 @@ var Page = function(attributes, options) {
 
   this.packageme = require("packageme");
 
+  if(!this.attributes.body)
+    throw new Error("'body' is missing.\n"+JSON.stringify(this.attributes));
+
   var root = this.attributes.root;
+  var body = this.attributes.body;
+  var layout = this.attributes.layout;
+  var stylesheets = this.attributes.stylesheets;
+  var javascripts = this.attributes.javascripts;
+  var views = this.attributes.views;
+
   if(!root)
     root = this.attributes.root = path.dirname(body);
 
-  var body = this.attributes.body;
-  if(!body)
-    throw new Error("'body' is missing.\n"+JSON.stringify(this.attributes));
-
-  if(this.attributes.body.indexOf(".") == 0)
-    body = this.attributes.body = path.normalize(root+"/"+this.attributes.body);
+  if(body.indexOf(".") == 0 || body.indexOf("/") != 0)
+    this.attributes.body = body = path.normalize(root+"/"+body);
   
-  if(typeof this.attributes.layout == "string" && 
-      this.attributes.layout.indexOf(".") == 0 && 
-      this.attributes.layout.indexOf("/") != 0)
-    this.attributes.layout = path.normalize(root+"/"+this.attributes.layout);
-  else
-    if(this.attributes.layout !== false)
-      this.attributes.layout = __dirname+"/layout.html";
+  
+  if(typeof layout == "string" && 
+      layout.indexOf(".") == 0 && 
+      layout.indexOf("/") != 0)
+    this.attributes.layout = layout = path.normalize(root+"/"+layout);
 
   var prependRoot = function(v){ 
     if(v.indexOf(".") == 0 || v.indexOf("/") != 0)
@@ -39,40 +42,45 @@ var Page = function(attributes, options) {
     else
       return v;
   };
-  if(this.attributes.stylesheets)
-    this.attributes.stylesheets = _.map(this.attributes.stylesheets, prependRoot);
-  if(this.attributes.javascripts)
-    this.attributes.javascripts = _.map(this.attributes.javascripts, prependRoot);
-  if(this.attributes.views)
-    this.attributes.views = _.map(this.attributes.views, prependRoot);
+
+  if(stylesheets)
+    this.attributes.stylesheets = stylesheets = _.map(stylesheets, prependRoot);
+  if(javascripts)
+    this.attributes.javascripts = javascripts = _.map(javascripts, prependRoot);
+  if(views)
+    this.attributes.views = views = _.map(views, prependRoot);
 }
 
 _.extend(Page.prototype, Backbone.Events, {
 
   initialize: function() {},
 
-  registerStylesheetHandler : function(app) {
-    if(this.attributes.stylesheets) {
+  registerStylesheetHandler : function(req, res, next){
+    // in case only one argument is given, assume it is app and register handler
+    if(arguments.length == 1) {
       var page = this;
-      app.get("/" + this.cid + ".css", function(req, res, next){
-        res.header("content-type","text/css");
-        page.packageme({source: page.attributes.stylesheets, format: "css"}).pipe(res);
+      req.get("/" + this.cid + ".css", function(req, res, next){
+        page.registerJavascriptHandler(req, res, next);
       });
+      return;
     }
 
-    return this;
+    res.header("content-type","text/css");
+    this.packageme({source: this.attributes.stylesheets, format: "css"}).pipe(res);
   },
 
-  registerJavascriptHandler : function(app) {
-    if(this.attributes.javascripts) {
+  registerJavascriptHandler : function(req, res, next) {
+    // in case only one argument is given, assume it is app and register handler
+    if(arguments.length == 1) {
       var page = this;
-      app.get("/"+ this.cid + ".js", function(req, res, next){
-        res.header("content-type","text/javascript");
-        page.packageme({source: page.attributes.javascripts, format: "js"}).pipe(res);
+      req.get("/"+ this.cid + ".js", function(req, res, next){
+        page.registerJavascriptHandler(req, res, next);
       });
+      return;
     }
 
-    return this;
+    res.header("content-type","text/javascript");
+    this.packageme({source: this.attributes.javascripts, format: "js"}).pipe(res);
   },
 
   compileViews : function(callback) {
@@ -84,44 +92,41 @@ _.extend(Page.prototype, Backbone.Events, {
     return this;
   },
 
-  render: function(){
+  render : function(req, res, next){
+    var renderData = {};
+
+    if(this.attributes.variables)
+      renderData = _.extend(renderData, this.attributes.variables);
+
+    // provide params and query to templates
+    renderData.params = JSON.stringify(req.params ? req.params : {});
+    renderData.query = JSON.stringify(req.query ? req.query : {});
+
+    // provide stylesheets and javascripts to templates
+    if(this.attributes.stylesheets)
+      renderData.stylesheets = '<link rel="stylesheet" href="/'+ this.cid + '.css">';
+    if(this.attributes.javascripts)
+      renderData.javascripts = '<script type="text/javascript" src="/'+ this.cid + '.js"></script>';
+
+    // compile the this and render the output
     var page = this;
-
-    return function(req, res, next){
-
-      var renderData = {};
-
-      if(page.attributes.variables)
-        renderData = _.clone(page.attributes.variables);
-
-      // provide params and query to templates
-      renderData.params = JSON.stringify(req.params ? req.params : {});
-      renderData.query = JSON.stringify(req.query ? req.query : {});
-
-      // provide stylesheets and javascripts to templates
-      if(page.attributes.stylesheets)
-        renderData.stylesheets = '<link rel="stylesheet" href="/'+ page.cid + '.css">';
-      if(page.attributes.javascripts)
-        renderData.javascripts = '<script type="text/javascript" src="/'+ page.cid + '.js"></script>';
-
-      // compile the page and render the output
-      page.compileViews(function(viewsData) {
-        renderData.views = viewsData;
+    this.compileViews(function(viewsData) {
+      renderData.views = viewsData;
+      
+      res.render(page.attributes.body, renderData, function(err, bodyData){
         
-        res.render(page.attributes.body, renderData, function(err, bodyData){
-          
-          if(page.attributes.layout) {
-            renderData.body = bodyData;
-            res.render(page.attributes.layout, renderData);
-          }
-          else
-            res.send(bodyData);
-        });
+        if(page.attributes.layout) {
+          renderData.content = bodyData;
+          res.render(page.attributes.layout, renderData);
+        }
+        else
+          res.send(bodyData);
       });
+    });
 
-      return this;
-    }
+    return this;
   }
+
 });
 
 Page.extend = Backbone.View.extend;

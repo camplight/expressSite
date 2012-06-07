@@ -1,0 +1,12 @@
+{
+  "author": "",
+  "name": "libs",
+  "version": "0.0.0",
+  "dependencies": {
+    "jquery": "latest"
+  },
+  "devDependencies": {},
+  "engines": {
+    "browser": "*"
+  }
+}
