@@ -60,7 +60,7 @@ _.extend(Page.prototype, Backbone.Events, {
     if(arguments.length == 1) {
       var page = this;
       req.get("/" + this.cid + ".css", function(req, res, next){
-        page.registerJavascriptHandler(req, res, next);
+        page.registerStylesheetHandler(req, res, next);
       });
       return;
     }
