@@ -37,6 +37,12 @@ var Page = function(attributes, options) {
     this.attributes.layout = layout = path.normalize(root+"/"+layout);
 
   var prependRoot = function(v){ 
+    if(typeof v == "object") {
+      if(v.fullPath.indexOf(".") == 0 || v.fullPath.indexOf("/") != 0)
+        v.fullPath = path.normalize(root+"/"+v.fullPath); 
+      return v;
+    }
+
     if(v.indexOf(".") == 0 || v.indexOf("/") != 0)
       return path.normalize(root+"/"+v); 
     else
