@@ -14,7 +14,7 @@ describe('Page with Partials', function(){
   });
 
   it("should be able to create Page instance with body => "+partialsPagePath, function(){
-    page = new Page({body: partialsPagePath, layout: false});
+    page = new Page({content: partialsPagePath, layout: false});
     expect(page).toBeDefined();
   });
 

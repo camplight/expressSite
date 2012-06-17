@@ -14,7 +14,8 @@
     "hogan": "latest",
     "packageme": "latest",
     "consolidate": "latest",
-    "underscore" : "latest"
+    "underscore" : "latest",
+    "async": "latest"
   },
   "devDependencies": {
     "jasmine-node": "latest",
