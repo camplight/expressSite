@@ -11,28 +11,33 @@ var page;
 
 describe('App and Page Module critical', function(){
 
-  it("app and page should be defined", function(){
+  it("app and page should be defined", function(done){
     expect(app).toBeDefined();
     expect(app.addPage).toBeDefined();
     expect(Page).toBeDefined();
+    done();
   });
 
-  it("should be able to create Page instance with body => "+emptyPagePath, function(){
+  it("should be able to create Page instance with body => "+emptyPagePath, function(done){
     page = new Page({
-      body: emptyPagePath, 
-      javascripts:[{
+      content: emptyPagePath, 
+      code:[{
         fullPath: __dirname+"/testData/code.js",
         relativePath: "bla/",
         name: "test",
         extension: "js"
       }]
     });
+    
     expect(page).toBeDefined();
+    
+    done();
   });
 
-  it("should be able to retrieve express route handler", function(){
+  it("should be able to retrieve express route handler", function(done){
     var handler = page.render;
     expect(handler).toBeDefined();
+    done();
   });
 
   it("should recieve default layout with empty values for data placeholders", function(done){

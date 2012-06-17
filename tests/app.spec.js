@@ -18,7 +18,7 @@ describe('App and Page Module critical', function(){
   });
 
   it("should be able to create Page instance with body => "+emptyPagePath, function(){
-    page = new Page({body: emptyPagePath});
+    page = new Page({content: emptyPagePath});
     expect(page).toBeDefined();
   });
 

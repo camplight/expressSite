@@ -1,7 +1,7 @@
 {
   "author": "Boris Filipov",
   "name": "expressSite",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "repository": {
     "type": "git",
     "url": "git://github.com/camplight/expressSite.git"
@@ -14,7 +14,8 @@
     "hogan": "latest",
     "packageme": "latest",
     "consolidate": "latest",
-    "underscore" : "latest"
+    "underscore" : "latest",
+    "async": "latest"
   },
   "devDependencies": {
     "jasmine-node": "latest",
