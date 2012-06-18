@@ -9,12 +9,11 @@ var Page = function(attributes, options) {
 
   if(this.defaults)
     attributes = _.extend({}, attributes, this.defaults);
+  
   if(this.extendDefaults)
     attributes = this.extendDefaultAttributes(attributes, this.extendDefaults)
 
   this.attributes = attributes;
-  if(typeof this.attributes.mode == "undefined")
-    this.attributes.mode = "development";
 
   this.cid = _.uniqueId('page');
   this.initialize.apply(this, arguments);
@@ -92,22 +91,29 @@ _.extend(Page.prototype, Backbone.Events, {
   },
 
   packagemeOptions : function(){
+    if(typeof this.attributes.packageme == "undefined")
+      this.attributes.packageme = {};
+
     if(this.attributes.code)
-      this.attributes.code = {
+      this.attributes.code = _.extend({
         source: this.attributes.code, 
         format: "js", 
         prefix: "/"+this.cid+"/",
-        compile: this.attributes.mode != "development"
-      }
+        compile: this.attributes.compile
+      }, this.attributes.packageme);
+
     if(this.attributes.style)
-      this.attributes.style = {
+      this.attributes.style = _.extend({
         source: this.attributes.style, 
         format: "css", 
-        prefix: "/"+this.cid+"/",
-        compile: this.attributes.mode != "development"
-      }
+        prefix: "/"+this.cid+"/"
+      }, this.attributes.packageme);
+
     if(this.attributes.views)
-      this.attributes.views = { sourceFolder: this.attributes.views, format: "html" }
+      this.attributes.views = _.extend({ 
+        sourceFolder: this.attributes.views, 
+        format: "html" 
+      }, this.attributes.packageme);
   },
 
   get: function(name){
@@ -188,6 +194,9 @@ _.extend(Page.prototype, Backbone.Events, {
       renderData.views = results[2];
 
       res.render(page.attributes.content, renderData, function(err, bodyData){
+        if(err) 
+          throw err;
+
         if(page.attributes.layout) {
           renderData.content = bodyData;
           res.render(page.attributes.layout, renderData);
