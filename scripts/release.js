@@ -30,3 +30,7 @@ if(exec("git push --tags").code != 0) {
   echo("Error: failed to push targs");
   exit(1);
 }
+if(exec("git push").code != 0) {
+  echo("Error: failed to push");
+  exit(1);
+}
