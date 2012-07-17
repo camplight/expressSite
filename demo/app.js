@@ -1,5 +1,5 @@
 // get express app instance with pages support
-var app = require("expressSite");
+var app = require("../");
 
 // register per extension template engines
 var cons = require("consolidate");
@@ -13,22 +13,16 @@ app.configure(function(){
   app.useExpressSiteMiddleware();
 });
 
-// set default Page attributes to be passed on every page created by the app
-app.defaultPageAttributes({
-  root: __dirname+"/client",
-  layout: "./pages/layout.jade",
-  variables: {
-    version: require(__dirname+"/../package.json").version
-  }
-});
-
 // add a page at given url with body, javascripts & some mustache variables
 app.addPage({
   url: "/",
-  body: "./pages/index",
-  javascripts: ["./libs", "./controllers/index.js"],
+  content: "./pages/index",
+  root: __dirname+"/client",
+  layout: "./pages/layout",
+  code: ["./libs", "./controllers/index.js"],
   variables: {
-    title: "Index Page"
+    title: "Index Page",
+    version: "0"
   }
 });
 
@@ -43,8 +37,8 @@ var aboutPageClone = new AboutPage({
 });
 
 // register stylesheets and javascript assets handlers
-aboutPageClone.registerStylesheetHandler(app);
-aboutPageClone.registerJavascriptHandler(app);
+aboutPageClone.registerStyleHandlers(app);
+aboutPageClone.registerCodeHandlers(app);
 
 // render the page on url different from the page's attributes
 app.get("/other", function(req, res, next){

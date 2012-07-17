@@ -26,11 +26,6 @@ Create `app.js` with the following example code:
       app.useExpressSiteMiddleware();
     });
 
-    app.defaultPageAttributes({
-      root: __dirname+"/client",
-      layout: "./templates/layout.jade",
-    });
-
     app.addPage({
       url: "/",
       content: "./templates/index",
@@ -65,7 +60,6 @@ Launch the application or refer to the demo for additional usage examples.
 # Reference #
 ## expressSite ##
 - `addPage`(`Page Class` or `Page attributes object`)
-- `defaultPageAttributes`(`Page attributes object`)
 
 Note that Page attributes which are Array(`views`, `style`, `code`) or Object(`variables`) and are present in `defaultPageAtrributes` will be appened/merged with the `defaultPageAttributes`. However `Page.defaults` will override those arrays/objects.
 
@@ -78,34 +72,61 @@ Note that Page attributes which are Array(`views`, `style`, `code`) or Object(`v
       defaults: {
         root: String,
         url: String,
-        code: Array[String] or String,
-        views: Array[String] or String,
-        style: Array[String] or String,
+        code: Array[String],
+        views: Array[String],
+        viewsEngine: String,
+        style: Array[String],
         content: String,
         variables: Object
-      }
+      },
 
-      // methods
-      initialize: function(){ ... },
-      renderCode: function(app || req, res, next) { ... },
-      renderStyle: function(app || req, res, next) { ... },
-      compileViews: function(callback(data)) { ... },
-      render: function(app || req, res, next) { ... }
+      extendDefaults: {
+        views: Array[String],
+        code: Array[String],
+        ...
+      }
     });
 
 ### attributes ###
 Note that all paths except `root` can be full or relative(starting with `./`, `../` or without `/`), in case of relative usage, `root` value will be prepended. 
 
-- `root` -> full path to page's assets (code, styles, templates, views), if missing content/body parent directory will be used as root.
-- `content` or `body` -> path to template file to be rendered /must be provided/
-- `layout` -> path to template file to be used as layout, if missing only the content/body will be rendered and send as response.
+`extendDefaults` object if present will override primitive variables and append(push at the end) to arrays for defaults.
+example:
+
+    var MyPage = Page.extend({
+      defaults : {
+        variable: "A",
+        list: [1, 2]
+      },
+      extendDefaults : {
+        variable: "B",
+        list: [3]
+      }
+    });
+
+    var p = new MyPage();
+    console.log(p.attributes.variable); // output: B
+    console.log(p.attributes.list); // output: [1,2,3]
+
 - `url` -> uri to which `expressSite.addPage` should mount given page, if missing `addPage` won't mount the page in express router.
-- `code` or `javascripts` -> path or array of paths to page's code/javascripts/coffeescript & etc. It is mainly been passed directly to `packageme`. `Page.renderCode(app)` is magically used by `expressSite.addPage` to register route handler for those code assets.
-- `style` or `stylesheets` -> path or array of paths to page's stylesheets. It is again send directly to `packageme`. And there is `Page.renderStyle(app)` for providing packaged version of those assets.
+
+- `root` -> full path to page's assets (code, styles, templates, views), if missing content/body parent directory will be used as root.
+- `content` -> path to template file to be rendered /must be provided/
+- `layout` -> path to template file to be used as layout, if missing only the content/body will be rendered and send as response.
+
+- `code` -> path or array of paths to page's code/javascripts/coffeescript & etc. It is mainly been passed directly to `packageme`. `Page.renderCode(app)` is magically used by `expressSite.addPage` to register route handler for those code assets.
+
+- `style` -> path or array of paths to page's stylesheets. It is again send directly to `packageme`. And there is `Page.renderStyle(app)` for providing packaged version of those assets.
+
 - `views` -> array of paths to page's client-side templates. Folders or Files which `packageme` will combine and inject to the page's content within `views` local variable. Those views/templates can be used within browser and as such to minify client requests to the site.
+- `viewsEngine` -> string, defaults to "html", can be set to 'jade' which instructs packageme to compile jade views to html instead
+
 - `variables` -> object of variables which will be used as data source when rendering the page's templated content.
 
-## Page.renderCode(app) ##
-## Page.renderStyle(app) ##
-## Page.render(req, res, next) ##
 ## Page.initialize(attributes, options) ##
+## Page.registerStyleHandlers(app) ##
+## Page.registerCodeHandlers(app) ##
+## Page.compileViews(callback) ##
+## Page.compileCode(callback) ##
+## Page.compileStyle(callback) ##
+## Page.render(req, res, next) ##

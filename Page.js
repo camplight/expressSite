@@ -20,9 +20,6 @@ var Page = function(attributes, options) {
 
   this.packageme = require("packageme");
 
-  if(!this.attributes.body && !this.attributes.content)
-    throw new Error("'body' or 'content' is missing.\n"+JSON.stringify(this.attributes));
-
   // prepend root to any of given paths as well as calculate the root if it is missing.
   this.rootPaths();
 
@@ -46,6 +43,8 @@ _.extend(Page.prototype, Backbone.Events, {
       else
       if(typeof input[key] == "object")
         _.extend(input[key], attrs[key]);
+      else
+          input[key] = attrs[key];
     return input;
   },
 
@@ -56,6 +55,11 @@ _.extend(Page.prototype, Backbone.Events, {
     var style = this.attributes.style;
     var code = this.attributes.code;
     var views = this.attributes.views;
+
+    // in case no content and no root are given, it is not possible to root any 
+    // of the other properties
+    if(!root && !content)
+      return;
 
     if(!root)
       root = this.attributes.root = path.dirname(content);
@@ -112,7 +116,7 @@ _.extend(Page.prototype, Backbone.Events, {
     if(this.attributes.views)
       this.attributes.views = _.extend({ 
         sourceFolder: this.attributes.views, 
-        format: "html" 
+        format: this.attributes.viewsEngine || "html"
       }, this.attributes.packageme);
   },
 
