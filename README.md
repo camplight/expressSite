@@ -70,6 +70,7 @@ Note that Page attributes which are Array(`views`, `style`, `code`) or Object(`v
     var MyPage = module.exports = Page.extend({
       // attributes
       defaults: {
+        name: String,
         root: String,
         url: String,
         code: Array[String],
@@ -109,6 +110,7 @@ example:
     console.log(p.attributes.list); // output: [1,2,3]
 
 - `url` -> uri to which `expressSite.addPage` should mount given page, if missing `addPage` won't mount the page in express router.
+- `name` -> Page's name, value used when generating code & style tags otherwise self generated unique names will be in place.
 
 - `root` -> full path to page's assets (code, styles, templates, views), if missing content/body parent directory will be used as root.
 - `content` -> path to template file to be rendered /must be provided/

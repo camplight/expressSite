@@ -15,7 +15,7 @@ var Page = function(attributes, options) {
 
   this.attributes = attributes;
 
-  this.cid = _.uniqueId('page');
+  this.cid = this.attributes.name || _.uniqueId('page');
   this.initialize.apply(this, arguments);
 
   this.packageme = require("packageme");
