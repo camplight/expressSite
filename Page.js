@@ -8,7 +8,7 @@ var Page = function(attributes, options) {
   attributes = attributes || {};
 
   if(this.defaults)
-    attributes = _.extend({}, attributes, this.defaults);
+    attributes = _.extend({}, attributes, this.cloneDefaults());
   
   if(this.extendDefaults)
     attributes = this.extendDefaultAttributes(attributes, this.extendDefaults)
@@ -30,6 +30,14 @@ var Page = function(attributes, options) {
 _.extend(Page.prototype, Backbone.Events, {
 
   initialize: function() {},
+
+  cloneDefaults: function() {
+    var result = _.clone(this.defaults);
+    result.views = _.clone(this.defaults.views);
+    result.code = _.clone(this.defaults.code);
+    result.style = _.clone(this.defaults.style);
+    return result;
+  },
 
   extendDefaultAttributes: function(input, attrs){
     // mix input with attrs
