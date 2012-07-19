@@ -172,6 +172,17 @@ _.extend(Page.prototype, Backbone.Events, {
     return this;
   },
 
+  generateCode : function(callback){
+    if(this.attributes.code) {
+      this.packageme(this.attributes.code).toString(function(data){
+        callback(null, data);
+      });
+    } else
+      callback(null, "");
+
+    return this;
+  },
+
   compileStyle : function(callback){
     if(this.attributes.style) {
       this.packageme(this.attributes.style).toStyleTags(function(data){
@@ -179,6 +190,17 @@ _.extend(Page.prototype, Backbone.Events, {
       });
     } else
       callback(null, []);
+
+    return this;
+  },
+
+  generateStyle : function(callback){
+    if(this.attributes.style) {
+      this.packageme(this.attributes.style).toString(function(data){
+        callback(null, data);
+      });
+    } else
+      callback(null, "");
 
     return this;
   },
